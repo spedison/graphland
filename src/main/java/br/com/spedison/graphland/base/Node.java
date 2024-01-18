@@ -1,14 +1,23 @@
-package br.com.spedison.grafos.base;
+package br.com.spedison.graphland.base;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-public class Node<T> {
+/***
+ * Define node of graph with a content defined by T
+ * @param <T>
+ */
+public class Node<T extends Object> {
     private T content;
     private String name;
     private short countCheckNode;
     private Boolean isChecked;
-    List<Node> nextNodes;
+    List<Node<T>> nextNodes;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -25,14 +34,14 @@ public class Node<T> {
 
     public void setChecked() {
         isChecked = true;
-        countCheckNode ++;
+        countCheckNode++;
     }
 
     public short getCountCheckNode() {
         return countCheckNode;
     }
 
-    public List<Node> getNextNodes() {
+    public List<Node<T>> getNextNodes() {
         return nextNodes;
     }
 
@@ -47,14 +56,14 @@ public class Node<T> {
         nextNodes = new LinkedList<>();
     }
 
-    void addNextNode(Node<?> nextNode) {
+    void addNextNode(Node<T> nextNode) {
         nextNodes.add(nextNode);
     }
 
     @Override
     public String toString() {
         return "Node{" +
-                "conteudo=" + content +
+                "content=" + content +
                 ", name='" + name + '\'' +
                 ", isChecked=" + isChecked +
                 '}';
@@ -70,6 +79,8 @@ public class Node<T> {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        if (content == null)
+            return Objects.hash(name);
+        return Objects.hash(name,content);
     }
 }

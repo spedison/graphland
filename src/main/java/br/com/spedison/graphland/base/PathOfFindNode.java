@@ -1,11 +1,11 @@
-package br.com.spedison.grafos.base;
+package br.com.spedison.graphland.base;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class PathOfFindNode implements Cloneable, Cloning<PathOfFindNode> {
 
-    private List<Node<?>> listOfNodes = new LinkedList<>();
+    private List<Node> listOfNodes = new LinkedList<>();
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -14,17 +14,17 @@ public class PathOfFindNode implements Cloneable, Cloning<PathOfFindNode> {
         return ret;
     }
 
-    public void queue(Node<?> node) {
+    public void queue(Node node) {
         listOfNodes.add(node);
     }
 
-    public Node<?> dequeue() {
+    public Node dequeue() {
 
-        if (listOfNodes.size() == 0)
+        if (listOfNodes.isEmpty())
             return null;
 
         int last = listOfNodes.size() - 1;
-        Node<?> ret = listOfNodes.get(last); // get last
+        Node ret = listOfNodes.get(last); // get last
         listOfNodes.remove(last);
         return ret;
     }
@@ -38,7 +38,7 @@ public class PathOfFindNode implements Cloneable, Cloning<PathOfFindNode> {
         return listOfNodes.indexOf(node) != -1;
     }
 
-    boolean exists(String nameNode) {
+    public boolean exists(String nameNode) {
         return listOfNodes.indexOf(nameNode) != -1;
     }
 
@@ -47,7 +47,7 @@ public class PathOfFindNode implements Cloneable, Cloning<PathOfFindNode> {
         if (listOfNodes.isEmpty())
             return "Path is Empty";
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Path used in find ::: ");
         sb.append("[[ " + listOfNodes.get(0).getName() + " ");
         listOfNodes.stream().skip(1).forEach(node -> sb.append(" -> " + node.getName()));
@@ -62,5 +62,9 @@ public class PathOfFindNode implements Cloneable, Cloning<PathOfFindNode> {
         } catch (CloneNotSupportedException cnse) {
             return null;
         }
+    }
+
+    public List<Node> getList() {
+        return listOfNodes;
     }
 }

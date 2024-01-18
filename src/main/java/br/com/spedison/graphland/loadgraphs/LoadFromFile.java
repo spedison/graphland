@@ -1,6 +1,6 @@
-package br.com.spedison.grafos.loadgraphs;
+package br.com.spedison.graphland.loadgraphs;
 
-import br.com.spedison.grafos.base.Graph;
+import br.com.spedison.graphland.base.Graph;
 
 public class LoadFromFile implements LoaderGraphs{
     private String nomeArquivo;

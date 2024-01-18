@@ -1,14 +1,17 @@
-package br.com.spedison.grafos.searcher;
+package br.com.spedison.graphland.searcher;
 
-import br.com.spedison.grafos.base.Graph;
-import br.com.spedison.grafos.base.Node;
-import br.com.spedison.grafos.base.PathOfFindNode;
+import br.com.spedison.graphland.base.Graph;
+import br.com.spedison.graphland.base.Node;
+import br.com.spedison.graphland.base.PathOfFindNode;
+import br.com.spedison.logger.ConfigLogger;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
-public class FindNode {
+public class FindNodeInGraph {
+
+    private static Logger log = ConfigLogger.getLogger(FindNodeInGraph.class);
 
     /***
      * Find a Node in a Graph using criteria function
@@ -19,8 +22,8 @@ public class FindNode {
      * @param criteria - Criteria used for a find node.
      * @return - return True if found a first result. Otherwise not found nay item node.
      */
-    public Boolean findNode(Graph<?, ?> graph, Node<?> currentNode,
-                            PathOfFindNode path, Function<Node<?>, Boolean> criteria) {
+    public Boolean findFirstNodeInGraph(Graph<?, ?> graph, Node<?> currentNode,
+                                        PathOfFindNode path, Function<Node<?>, Boolean> criteria) {
 
 
         /*** It's recursive function and the criterias for Stop are ::
@@ -32,9 +35,11 @@ public class FindNode {
          *
          */
 
+        final String currentPathStr = "Current Path :::  ";
+
         // The node alread checked OR
         if (currentNode.getChecked()) {
-            System.out.println("Current Path :::" + path.toString() + " in " + currentNode.getName());
+            log.fine(currentPathStr + path.toString() + " in " + currentNode.getName());
             return false;
         }
 
@@ -42,14 +47,14 @@ public class FindNode {
         if (criteria.apply(currentNode)) {
             currentNode.setChecked();
             path.queue(currentNode);
-            System.out.println("Current Path :::" + path.toString());
+            log.fine(currentPathStr + path.toString());
             return true;
         }
 
         // No there are more elements to verify!
-        if (currentNode.getNextNodes().size() == 0) {
+        if (currentNode.getNextNodes().isEmpty()) {
             currentNode.setChecked();
-            System.out.println("Current Path :::" + path.toString() + " in " + currentNode.getName());
+            log.fine(currentPathStr + path.toString() + " in " + currentNode.getName());
             return false;
         }
 
@@ -64,7 +69,7 @@ public class FindNode {
                 .filter(n -> !findOne[0])
                 .forEach(
                         newCurrentNode -> {
-                            boolean ret = findNode(graph, newCurrentNode, path, criteria);
+                            boolean ret = findFirstNodeInGraph(graph, newCurrentNode, path, criteria);
                             if (ret) {
                                 findOne[0] = true;
                             }
@@ -86,17 +91,17 @@ public class FindNode {
      * @param graph - Graph usage
      * @param currentNode - What is a current Node usage in a Path
      * @param currentPath - Register of Path used as result
-     * @param results - Register of Path is positive result
+     * @param resultPaths - Register of Path is positive result
      * @param maxCheckNode - if node check many times... it's can ocasionete loops. If number of verificaction in note is more than maxCheckNode, the verification returns.
      * @param criteria - Criteria used for a find node.
      * @return - None
      */
     public void findNodeInAllPathsPossible(Graph<?, ?> graph, Node<?> currentNode,
-                                           PathOfFindNode currentPath, List<PathOfFindNode> results,
+                                           PathOfFindNode currentPath, List<PathOfFindNode> resultPaths,
                                            short maxCheckNode, Function<Node<?>, Boolean> criteria) {
 
         currentNode.setChecked();
-        System.out.println("Current Path  :::  " + currentPath.toString() + " in " + currentNode.getName());
+        log.finer("Current Path  :::  " + currentPath.toString() + " in " + currentNode.getName());
 
         /*** It's recursive function and the criterias for Stop are ::
          *  1) Don´t find Edge then Left Node is equal a currentNode.
@@ -121,7 +126,7 @@ public class FindNode {
         // Found item:
         if (criteria.apply(currentNode)) {
             currentPath.queue(currentNode);
-            results.add(currentPath.cloning());
+            resultPaths.add(currentPath.cloning());
             currentPath.dequeue();
             return;
         }
@@ -139,7 +144,7 @@ public class FindNode {
                 .forEach(
                         newCurrentNode ->
                                 findNodeInAllPathsPossible(graph, newCurrentNode,
-                                        currentPath, results, maxCheckNode, criteria)
+                                        currentPath, resultPaths, maxCheckNode, criteria)
                 );
         currentPath.dequeue();
     }
