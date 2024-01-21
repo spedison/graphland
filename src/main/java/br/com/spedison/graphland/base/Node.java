@@ -6,14 +6,14 @@ import java.util.Objects;
 
 /***
  * Define node of graph with a content defined by T
- * @param <T>
+ * @param <TN>
  */
-public class Node<T extends Object> {
-    private T content;
+public class Node<TN extends Object, TE extends Object> {
+    private TN content;
     private String name;
-    private short countCheckNode;
-    private Boolean isChecked;
-    List<Node<T>> nextNodes;
+    private short countVisitedNode;
+    private Boolean isVisited;
+    List<Edge<TE,TN>> listEdges;
 
     public void setName(String name) {
         this.name = name;
@@ -24,63 +24,70 @@ public class Node<T extends Object> {
     }
 
     public Boolean getChecked() {
-        return isChecked;
+        return isVisited;
     }
 
     public void clearChecked() {
-        isChecked = false;
-        countCheckNode = 0;
+        isVisited = false;
+        countVisitedNode = 0;
     }
 
-    public void setChecked() {
-        isChecked = true;
-        countCheckNode++;
+    public void setVisited() {
+        isVisited = true;
+        countVisitedNode++;
     }
 
-    public short getCountCheckNode() {
-        return countCheckNode;
+    public Boolean isVisited(){
+        return isVisited;
     }
 
-    public List<Node<T>> getNextNodes() {
-        return nextNodes;
+    public short getCountVisitedNode() {
+        return countVisitedNode;
     }
 
-    public T getContent() {
+
+    public TN getContent() {
         return content;
     }
 
-    public Node(T content, String name) {
+    public Node(TN content, String name) {
         this.content = content;
         this.name = name;
-        isChecked = false;
-        nextNodes = new LinkedList<>();
+        isVisited = false;
+        listEdges = new LinkedList<>();
     }
 
-    void addNextNode(Node<T> nextNode) {
-        nextNodes.add(nextNode);
+    void addEdge(Edge<TE,TN> nextEdge) {
+        listEdges.add(nextEdge);
+    }
+
+    public List<Edge<TE, TN>> getListEdges() {
+        return listEdges;
     }
 
     @Override
     public String toString() {
         return "Node{" +
-                "content=" + content +
-                ", name='" + name + '\'' +
-                ", isChecked=" + isChecked +
-                '}';
+                " content = " + content +
+                ", name= '" + name + '\'' +
+                ", isVisited = " + isVisited +
+                ", numberOfEdges = " + listEdges.size() +
+                " }";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if ((o instanceof Node<?> node)) return node.name.equals(name);
-        if ((o instanceof String nameNode)) return nameNode.equals(name);
+        if (o instanceof Node otherNode) {
+            return otherNode.getName().trim().equalsIgnoreCase(this.getName().trim());
+        }
         return false;
     }
 
     @Override
     public int hashCode() {
         if (content == null)
-            return Objects.hash(name);
-        return Objects.hash(name,content);
+            return Objects.hashCode(name);
+        return Objects.hash(name, content);
     }
 }

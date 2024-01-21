@@ -3,66 +3,69 @@ package br.com.spedison.graphland.base;
 
 import java.util.Objects;
 
-public class Edge<T> {
-    private T content;
+public class Edge<TE extends Object, TN extends Object> {
+    private TE content;
 
     private String name;
 
     private Orientation orientation;
 
-    private Node<T> nodeLeft;
-    private Node<T> nodeRight;
+    private Node<TN, TE> nodeStart;
+    private Node<TN, TE> nodeEnd;
 
     /**
      * Contructor used for find Edge based in Nodes.
      *
-     * @param nodeLeft
-     * @param nodeRight
+     * @param nodeStart
+     * @param nodeEnd
      */
-    public Edge(Node<T> nodeLeft, Node<T> nodeRight) {
-        this.nodeLeft = nodeLeft;
-        this.nodeRight = nodeRight;
+    public Edge(Node<TN, TE> nodeStart, Node<TN, TE> nodeEnd) {
+        this.nodeStart = nodeStart;
+        this.nodeEnd = nodeEnd;
     }
 
     /**
      * Contructor used for find Edge based in Nodes.
      *
      * @param name
-     * @param nodeLeft
-     * @param nodeRight
+     * @param nodeStart
+     * @param nodeEnd
      */
-    public Edge(String name, Node<T> nodeLeft, Node<T> nodeRight) {
+    public Edge(String name, Node<TN, TE> nodeStart, Node<TN, TE> nodeEnd) {
         this.name = name;
-        this.nodeLeft = nodeLeft;
-        this.nodeRight = nodeRight;
+        this.nodeStart = nodeStart;
+        this.nodeEnd = nodeEnd;
     }
 
-    public Edge(T content, String name, Orientation orientation, Node<T> nodeLeft, Node<T> nodeRight) {
+
+    public Edge(TE content, String name, Orientation orientation, Node<TN, TE> nodeStart, Node<TN, TE> nodeEnd) {
+
         this.content = content;
         this.name = name;
         this.orientation = orientation;
-        this.nodeLeft = nodeLeft;
-        this.nodeRight = nodeRight;
+        this.nodeStart = nodeStart;
+        this.nodeEnd = nodeEnd;
 
+        // Atach Edge in Nodes.
         if (orientation == Orientation.FULL_CONNECTED) {
-            this.nodeLeft.addNextNode(this.nodeRight);
-            this.nodeRight.addNextNode(this.nodeLeft);
+            this.nodeStart.addEdge(this);
+            Edge rev = new Edge(this.content, this.name, Orientation.SIMPLE_CONNECTED, nodeEnd, nodeStart);
+            rev.orientation = Orientation.FULL_CONNECTED;
         } else {
-            this.nodeLeft.addNextNode(this.nodeRight);
+            this.nodeStart.addEdge(this);
         }
     }
 
-
-    public T getContent() {
+    public TE getContent() {
         return content;
     }
 
-    public Node<T> getNodeLeft() {
-        return nodeLeft;
+    public Node<TN, TE> getNodeStart() {
+        return nodeStart;
     }
 
-    public Node<T> getNodeRight() {
-        return nodeRight;
+    public Node<TN, TE> getNodeEnd() {
+        return nodeEnd;
     }
 
     public Orientation getOrientation() {
@@ -76,26 +79,34 @@ public class Edge<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o instanceof Edge<?> edge) {
+        if (o instanceof Edge edge) {
             if (this.orientation == Orientation.FULL_CONNECTED) {
-                return (this.nodeRight.equals(edge.nodeRight) &&
-                        this.nodeLeft.equals(edge.nodeLeft)) ||
-                        (this.nodeRight.equals(edge.nodeLeft) &&
-                                this.nodeLeft.equals(edge.nodeRight));
+                return (this.nodeEnd.equals(edge.nodeEnd) &&
+                        this.nodeStart.equals(edge.nodeStart)) ||
+                        (this.nodeEnd.equals(edge.nodeStart) &&
+                                this.nodeStart.equals(edge.nodeEnd));
             } else {
-                return this.nodeRight.equals(edge.nodeRight) &&
-                        this.nodeLeft.equals(edge.nodeLeft);
+                return this.nodeEnd.equals(edge.nodeEnd) &&
+                        this.nodeStart.equals(edge.nodeStart);
             }
-        } else if (o instanceof String edgeName) {
-            return this.getName().equals(edgeName);
         } else
             return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getNodeLeft(), getNodeRight(), orientation);
+        return Objects.hash(getName(), getNodeStart(), getNodeEnd(), orientation);
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Edge{");
+        sb.append("content=").append(content);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", orientation=").append(orientation);
+        sb.append(", nodeLeft=").append(nodeStart);
+        sb.append(", nodeRight=").append(nodeEnd);
+        sb.append('}');
+        return sb.toString();
+    }
 }

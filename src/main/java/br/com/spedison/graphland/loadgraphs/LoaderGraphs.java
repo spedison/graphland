@@ -4,5 +4,5 @@ import br.com.spedison.graphland.base.Graph;
 
 public interface LoaderGraphs<TN,TE> {
     Graph<TN,TE> load();
-    void save();
+    void save(Graph<TN,TE> tg);
 }

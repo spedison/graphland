@@ -23,7 +23,7 @@ public class MainFindNodeAllPathsInGraph {
 
         fn.findNodeInAllPathsPossible(g, g.getStartNode(),
                 path, results, maxCheck,
-                node -> node.getName().trim().toLowerCase().equals("anuj"));
+                node -> node.getName().trim().equalsIgnoreCase("anuj"));
 
         log.fine("Paths finded ::: " + results.size() + " path(s) found.");
         results.stream().map(PathOfFindNode::toString).forEach(log::fine);

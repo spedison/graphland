@@ -1,0 +1,22 @@
+Graph::name::Test Of Graph with Integers
+Graph::type::Integer,Integer
+Graph::root::A
+
+Node::A::+INF
+Node::B::+INF
+Node::C::+INF
+Node::D::+INF
+Node::E::+INF
+Node::F::+INF
+
+Edge::A_B::2::A::B::FULL
+Edge::A_D::8::A::D::FULL
+Edge::D_B::5::D::B::FULL
+Edge::D_E::3::D::E::FULL
+Edge::B_E::6::B::E::FULL
+Edge::D_F::2::D::F::FULL
+Edge::E_C::9::E::C::FULL
+Edge::F_C::3::F::C::FULL
+Edge::E_F::9::E::F::FULL
+
+

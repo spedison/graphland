@@ -22,8 +22,8 @@ public class FindNodeInGraph {
      * @param criteria - Criteria used for a find node.
      * @return - return True if found a first result. Otherwise not found nay item node.
      */
-    public Boolean findFirstNodeInGraph(Graph<?, ?> graph, Node<?> currentNode,
-                                        PathOfFindNode path, Function<Node<?>, Boolean> criteria) {
+    public Boolean findFirstNodeInGraph(Graph<?, ?> graph, Node<?, ?> currentNode,
+                                        PathOfFindNode path, Function<Node<?, ?>, Boolean> criteria) {
 
 
         /*** It's recursive function and the criterias for Stop are ::
@@ -45,31 +45,31 @@ public class FindNodeInGraph {
 
         // Found item:
         if (criteria.apply(currentNode)) {
-            currentNode.setChecked();
+            currentNode.setVisited();
             path.queue(currentNode);
             log.fine(currentPathStr + path.toString());
             return true;
         }
 
         // No there are more elements to verify!
-        if (currentNode.getNextNodes().isEmpty()) {
-            currentNode.setChecked();
+        if (currentNode.getListEdges().isEmpty()) {
+            currentNode.setVisited();
             log.fine(currentPathStr + path.toString() + " in " + currentNode.getName());
             return false;
         }
 
         path.queue(currentNode);
-        currentNode.setChecked();
+        currentNode.setVisited();
 
         final boolean[] findOne = {false};
         currentNode
-                .getNextNodes()
+                .getListEdges()
                 .stream()
                 .sequential()
                 .filter(n -> !findOne[0])
                 .forEach(
-                        newCurrentNode -> {
-                            boolean ret = findFirstNodeInGraph(graph, newCurrentNode, path, criteria);
+                        edgeInNode -> {
+                            boolean ret = findFirstNodeInGraph(graph, edgeInNode.getNodeEnd(), path, criteria);
                             if (ret) {
                                 findOne[0] = true;
                             }
@@ -96,11 +96,15 @@ public class FindNodeInGraph {
      * @param criteria - Criteria used for a find node.
      * @return - None
      */
-    public void findNodeInAllPathsPossible(Graph<?, ?> graph, Node<?> currentNode,
+    public void findNodeInAllPathsPossible(Graph<?, ?> graph, Node<?, ?> currentNode,
                                            PathOfFindNode currentPath, List<PathOfFindNode> resultPaths,
-                                           short maxCheckNode, Function<Node<?>, Boolean> criteria) {
+                                           short maxCheckNode, Function<Node<?, ?>, Boolean> criteria) {
 
-        currentNode.setChecked();
+        if (currentPath.getList().size() == 1) {
+            graph.clearCheckNodes();
+        }
+
+        currentNode.setVisited();
         log.finer("Current Path  :::  " + currentPath.toString() + " in " + currentNode.getName());
 
         /*** It's recursive function and the criterias for Stop are ::
@@ -113,37 +117,39 @@ public class FindNodeInGraph {
          */
 
         // The node alread checked OR
-        if (currentNode.getCountCheckNode() >= maxCheckNode) {
+        if (currentNode.getCountVisitedNode() >= maxCheckNode) {
             return;
         }
 
         // If current node alread exists in Path, do not process
         // This check prevent unwanted loops.
-        if (currentPath.exists(currentNode)){
+        if (currentPath.exists(currentNode)) {
             return;
         }
 
         // Found item:
         if (criteria.apply(currentNode)) {
-            currentPath.queue(currentNode);
-            resultPaths.add(currentPath.cloning());
-            currentPath.dequeue();
+            if (!resultPaths.stream().anyMatch(p -> p.equals(currentPath))) {
+                currentPath.queue(currentNode);
+                resultPaths.add(currentPath.cloning());
+                currentPath.dequeue();
+            }
             return;
         }
 
         // No there are more elements to verify!
-        if (currentNode.getNextNodes().isEmpty()) {
+        if (currentNode.getListEdges().isEmpty()) {
             return;
         }
 
         currentPath.queue(currentNode);
         currentNode
-                .getNextNodes()
+                .getListEdges()
                 .stream()
                 .sequential()
                 .forEach(
-                        newCurrentNode ->
-                                findNodeInAllPathsPossible(graph, newCurrentNode,
+                        newEdgieInNode ->
+                                findNodeInAllPathsPossible(graph, newEdgieInNode.getNodeEnd(),
                                         currentPath, resultPaths, maxCheckNode, criteria)
                 );
         currentPath.dequeue();

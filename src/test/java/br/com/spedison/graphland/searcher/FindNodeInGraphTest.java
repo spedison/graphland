@@ -49,7 +49,7 @@ class FindNodeInGraphTest {
             assertEquals("a", fn.getList().get(size - 1).getName().toLowerCase().trim().substring(0,1));
         }
 
-        assertEquals(5,result.size());
+        assertEquals(6,result.size());
 
         System.out.println("----Results-----");
 

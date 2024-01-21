@@ -7,9 +7,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class NodeTest {
     private static String name = "Node name test";
     private static Integer content = 10;
+    private Node<Integer,Integer> getNodeTest() {
+        return getNodeTest(0);
+    }
 
-    private Node<Integer> getNodeTest() {
-        Node<Integer> nodeTest = new Node<>(content, name);
+    private Node<Integer,Integer> getNodeTest(Integer rev) {
+        Node<Integer,Integer> nodeTest = new Node<>(content+rev, name);
         return nodeTest;
     }
 
@@ -25,8 +28,8 @@ class NodeTest {
 
     @Test
     void clearChecked() {
-        Node<Integer> nodeTest = getNodeTest();
-        nodeTest.setChecked();
+        Node<Integer,Integer> nodeTest = getNodeTest();
+        nodeTest.setVisited();
         assertTrue(nodeTest.getChecked());
         nodeTest.clearChecked();
         assertFalse(nodeTest.getChecked());
@@ -35,22 +38,24 @@ class NodeTest {
 
     @Test
     void getCountCheckNode() {
-        Node<Integer> nodeTest = getNodeTest();
-        nodeTest.setChecked();
-        nodeTest.setChecked();
-        nodeTest.setChecked();
-        assertEquals(3, nodeTest.getCountCheckNode());
+        Node<Integer,Integer> nodeTest = getNodeTest();
+        nodeTest.setVisited();
+        nodeTest.setVisited();
+        nodeTest.setVisited();
+        assertEquals(3, nodeTest.getCountVisitedNode());
         nodeTest.clearChecked();
-        assertEquals(0, nodeTest.getCountCheckNode());
+        assertEquals(0, nodeTest.getCountVisitedNode());
     }
 
     @Test
-    void getNextNodes() {
-        Node<Integer> nodeTest = getNodeTest();
-        nodeTest.getNextNodes().add(getNodeTest());
-        nodeTest.getNextNodes().add(getNodeTest());
-        nodeTest.getNextNodes().add(getNodeTest());
-        assertEquals(3, nodeTest.nextNodes.size());
+    void getListEdge() {
+        Node<Integer,Integer> nodeTestp1 = getNodeTest(100);
+        Node<Integer,Integer> nodeTestp2 = getNodeTest(200);
+        Edge<Integer,Integer> edge = new Edge<>(null,"teste",Orientation.FULL_CONNECTED,nodeTestp1,nodeTestp2);
+        assertEquals(1,nodeTestp1.getListEdges().size());
+        assertEquals(1,nodeTestp2.getListEdges().size());
+        assertSame(nodeTestp2.getListEdges().get(0).getNodeEnd(),nodeTestp1);
+        assertSame(nodeTestp1.getListEdges().get(0).getNodeEnd(),nodeTestp2);
     }
 
     @Test
@@ -60,14 +65,14 @@ class NodeTest {
 
     @Test
     void testToString() {
-        Node<Integer> node = getNodeTest();
-        assertEquals("Node{content=10, name='Node name test', isChecked=false}", node.toString());
+        Node<Integer,Integer> node = getNodeTest();
+        assertEquals("Node{ content = 10, name= 'Node name test', isVisited = false, numberOfEdges = 0 }", node.toString());
     }
 
     @Test
     void testEquals() {
-        Node<Integer> nt1 = getNodeTest();
-        Node<Integer> nt2 = getNodeTest();
+        Node<Integer,Integer> nt1 = getNodeTest();
+        Node<Integer,Integer> nt2 = getNodeTest();
         assertNotSame(nt1, nt2);
         assertEquals(nt1, nt2);
         nt1.setName(nt1.getName() + "_test");
