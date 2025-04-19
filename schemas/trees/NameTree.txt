@@ -1,0 +1,6 @@
+Mãe        -> Pai1 ; Mãe2
+Pai1      -> Filho1 ; Sobrinho2
+Mãe2      -> Filha1 ; Sobrinho3
+Sobrinho3 -> - ; Padrinho1
+Sobrinho2 -> Filhote ; -
+

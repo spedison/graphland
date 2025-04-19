@@ -17,7 +17,7 @@ public class MainDijkstraMinimization {
 
         String dest = args.length > 0 ? args[0] : "G";
 
-        Graph<DijkstraContent, Integer> graph = (new LoadFromFileDijkstra("./graphs/IntGraph2.txt")).load();
+        Graph<DijkstraContent, Integer> graph = (new LoadFromFileDijkstra("./schemas/graphs/IntGraph2.txt")).load();
         var dijkstraMinimization = new DijkstraMinimization();
 
         PathOfFindNode pon = dijkstraMinimization.processAlg(graph, dest);
